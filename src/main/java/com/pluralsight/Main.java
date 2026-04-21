@@ -17,18 +17,19 @@ public class Main {
 
 
         // Creating employees objects
-        try {
-            FileReader myFileReader = new FileReader(employeeFiles);
-            BufferedReader myBufferedReader = new BufferedReader(myFileReader);
-            populateObjectArray(myBufferedReader, employees);
-
-        } catch (FileNotFoundException e) {
-            System.err.println("File Not found: " + employeeFiles);
-        } catch (IOException e) {
-            System.out.println("IO Exception. ");
-        }
+        // Employee File -> Sending the file location to read
+        // Employees -> Sending the Object Array to populate it
+        populateEmployeesObjectArray(employeeFiles, employees);
 
         // Writing the objects data  in a text file.
+        // Payroll File  -> Sending the file location to write our text file
+        // Employees -> Sending the Object Array to read form it
+        writePayrollTextFile(payrollFile, employees);
+
+
+    }
+
+    private static void writePayrollTextFile(String payrollFile, Employee[] employees) {
         try {
             FileWriter myWriter = new FileWriter(payrollFile, true);
             BufferedWriter myBufferedWriter = new BufferedWriter(myWriter);
@@ -42,33 +43,41 @@ public class Main {
                     myBufferedWriter.append(text);
                 }
             }
-
             myBufferedWriter.close();
 
         } catch (IOException e) {
             System.err.println("IO Exceptions");
         }
-
-
     }
 
-    private static void populateObjectArray(BufferedReader myBufferedReader, Employee[] employees) throws IOException {
-        int index = 0;
-        String currentLine;
-        while ((currentLine = myBufferedReader.readLine()) != null) {
-            //Testing the first line of code for titles
-            if (currentLine.contains("id|name|hours-worked|pay-rate")) {
-                continue;
-            }
-            String[] currentEmployeeInfo = currentLine.split("\\|");
-            int employeeId = Integer.parseInt(currentEmployeeInfo[0]);
-            String employeeName = currentEmployeeInfo[1];
-            double employeeHoursWorked = Double.parseDouble(currentEmployeeInfo[2]);
-            double employeePayRate = Double.parseDouble(currentEmployeeInfo[3]);
-            employees[index] = new Employee(employeeId, employeeName, employeeHoursWorked, employeePayRate);
-            index++;
+    private static void populateEmployeesObjectArray(String employeeFiles, Employee[] employees) {
+        try {
+            FileReader myFileReader = new FileReader(employeeFiles);
+            BufferedReader myBufferedReader = new BufferedReader(myFileReader);
+            int index = 0;
+            String currentLine;
+            while ((currentLine = myBufferedReader.readLine()) != null) {
+                //Testing the first line of code for titles
+                if (currentLine.contains("id|name|hours-worked|pay-rate")) {
+                    continue;
+                }
+                String[] currentEmployeeInfo = currentLine.split("\\|");
+                int employeeId = Integer.parseInt(currentEmployeeInfo[0]);
+                String employeeName = currentEmployeeInfo[1];
+                double employeeHoursWorked = Double.parseDouble(currentEmployeeInfo[2]);
+                double employeePayRate = Double.parseDouble(currentEmployeeInfo[3]);
+                employees[index] = new Employee(employeeId, employeeName, employeeHoursWorked, employeePayRate);
+                index++;
 
+            }
+
+        } catch (FileNotFoundException e) {
+            System.err.println("File Not found: " + employeeFiles);
+        } catch (IOException e) {
+            System.out.println("IO Exception. ");
         }
     }
+
+
 }
 
