@@ -8,19 +8,22 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         String employeeFiles = "src/main/resources/employees.csv";
-        String currentLine;
-        String[] employeeInfo;
-        Employee[] employees = new Employee[10];
+        Employee[] employees = new Employee[8];
+
+
         try {
             FileReader myFileReader = new FileReader(employeeFiles);
             BufferedReader myBufferedReader = new BufferedReader(myFileReader);
 
-
             int i = 0;
-            //Printing the title
-            System.out.println(myBufferedReader.readLine());
-            while (( currentLine = myBufferedReader.readLine())!= null) {
-                employeeInfo = currentLine.split("\\|");
+            String currentLine;
+            while ((currentLine = myBufferedReader.readLine()) != null) {
+                //Testing the first line of code for titles
+                if (currentLine.contains("id|name|hours-worked|pay-rate")) {
+                    System.out.println(currentLine);
+                    continue;
+                }
+                String[] employeeInfo = currentLine.split("\\|");
                 int employeeId = Integer.parseInt(employeeInfo[0]);
                 String employeeName = employeeInfo[1];
                 double employeeHoursWorked = Double.parseDouble(employeeInfo[2]);
@@ -34,11 +37,10 @@ public class Main {
         } catch (IOException e) {
             System.out.println("IO Exception. ");
         }
-
+        // Displaying the employees
         for (Employee s : employees) {
-            if(s!=null) {
-                    System.out.printf("%s,ID- %d Gross pay: %.2f  \n",s.getName(),s.getEmployeeId(),s.getGrossPay());
-
+            if (s != null) {
+                System.out.printf("%s,ID- %d Gross pay: %.2f  \n", s.getName(), s.getEmployeeId(), s.getGrossPay());
             }
         }
 
