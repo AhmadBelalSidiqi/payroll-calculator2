@@ -12,19 +12,24 @@ public class Main {
         Employee[] employees = new Employee[8];
         System.out.println("Enter the name of the file employee to process: ");
         employeeFiles = fileLocation + scanner.nextLine();
+
         System.out.println("Enter the name of the payRoll file to create: ");
         payrollFile = fileLocation + scanner.nextLine();
-
 
         // Creating employees objects
         // Employee File -> Sending the file location to read
         // Employees -> Sending the Object Array to populate it
         populateEmployeesObjectArray(employeeFiles, employees);
 
+
         // Writing the objects data  in a text file.
         // Payroll File  -> Sending the file location to write our text file
         // Employees -> Sending the Object Array to read form it
-        writePayrollTextFile(payrollFile, employees);
+        if (payrollFile.endsWith(".json")) {
+            jsonTextFile(payrollFile, employees);
+        } else {
+            writePayrollTextFile(payrollFile, employees);
+        }
 
 
     }
@@ -76,8 +81,44 @@ public class Main {
         } catch (IOException e) {
             System.out.println("IO Exception. ");
         }
+
     }
 
+    public static void jsonTextFile(String payrollFile, Employee[] employees) {
+        try {
+            FileWriter myWriter = new FileWriter(payrollFile, true);
+            BufferedWriter myBufferedWriter = new BufferedWriter(myWriter);
+
+            myBufferedWriter.write("[");
+            myBufferedWriter.newLine();
+            boolean first = true;
+            for (Employee s : employees) {
+
+                if (s != null) {
+
+                    if (!first) {
+                        myBufferedWriter.write(",");
+                        myBufferedWriter.newLine();
+                    }
+                    first = false;
+                    myBufferedWriter.write(String.format(
+                            "  { \"id\" : %d, \"name\" :\"%s\", \"grossPay\" : %.2f }",
+                            s.getEmployeeId(),
+                            s.getName(),
+                            s.getGrossPay()
+                    ));
+                    myBufferedWriter.newLine();
+                }
+            }
+
+            myBufferedWriter.newLine();
+            myBufferedWriter.write("]");
+            myBufferedWriter.close();
+        } catch (IOException e) {
+            System.err.println("IO Exception: ");
+        }
+
+    }
 
 }
 
