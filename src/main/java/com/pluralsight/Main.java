@@ -1,49 +1,74 @@
 package com.pluralsight;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        String employeeFiles = "src/main/resources/employees.csv";
+        Scanner scanner = new Scanner(System.in);
+        String fileLocation = "src/main/resources/";
+        String employeeFiles;
+        String payrollFile;
         Employee[] employees = new Employee[8];
+        System.out.println("Enter the name of the file employee to process: ");
+        employeeFiles = fileLocation + scanner.nextLine();
+        System.out.println("Enter the name of the payRoll file to create: ");
+        payrollFile = fileLocation + scanner.nextLine();
 
 
+        // Creating employees objects
         try {
             FileReader myFileReader = new FileReader(employeeFiles);
             BufferedReader myBufferedReader = new BufferedReader(myFileReader);
+            populateObjectArray(myBufferedReader, employees);
 
-            int i = 0;
-            String currentLine;
-            while ((currentLine = myBufferedReader.readLine()) != null) {
-                //Testing the first line of code for titles
-                if (currentLine.contains("id|name|hours-worked|pay-rate")) {
-                    System.out.println(currentLine);
-                    continue;
-                }
-                String[] employeeInfo = currentLine.split("\\|");
-                int employeeId = Integer.parseInt(employeeInfo[0]);
-                String employeeName = employeeInfo[1];
-                double employeeHoursWorked = Double.parseDouble(employeeInfo[2]);
-                double employeePayRate = Double.parseDouble(employeeInfo[3]);
-                employees[i] = new Employee(employeeId, employeeName, employeeHoursWorked, employeePayRate);
-                i++;
-
-            }
         } catch (FileNotFoundException e) {
             System.err.println("File Not found: " + employeeFiles);
         } catch (IOException e) {
             System.out.println("IO Exception. ");
         }
-        // Displaying the employees
-        for (Employee s : employees) {
-            if (s != null) {
-                System.out.printf("%s,ID- %d Gross pay: %.2f  \n", s.getName(), s.getEmployeeId(), s.getGrossPay());
+
+        // Writing the objects data  in a text file.
+        try {
+            FileWriter myWriter = new FileWriter(payrollFile, true);
+            BufferedWriter myBufferedWriter = new BufferedWriter(myWriter);
+            String header = "id|name|Gross Pay";
+            myBufferedWriter.write(header);
+            myBufferedWriter.newLine();
+            String text;
+            for (Employee s : employees) {
+                if (s != null) {
+                    text = String.format("ID: %d - Name: %s - Gross pay: %.2f  %n", s.getEmployeeId(), s.getName(), s.getGrossPay());
+                    myBufferedWriter.append(text);
+                }
             }
+
+            myBufferedWriter.close();
+
+        } catch (IOException e) {
+            System.err.println("IO Exceptions");
         }
 
+
+    }
+
+    private static void populateObjectArray(BufferedReader myBufferedReader, Employee[] employees) throws IOException {
+        int index = 0;
+        String currentLine;
+        while ((currentLine = myBufferedReader.readLine()) != null) {
+            //Testing the first line of code for titles
+            if (currentLine.contains("id|name|hours-worked|pay-rate")) {
+                continue;
+            }
+            String[] currentEmployeeInfo = currentLine.split("\\|");
+            int employeeId = Integer.parseInt(currentEmployeeInfo[0]);
+            String employeeName = currentEmployeeInfo[1];
+            double employeeHoursWorked = Double.parseDouble(currentEmployeeInfo[2]);
+            double employeePayRate = Double.parseDouble(currentEmployeeInfo[3]);
+            employees[index] = new Employee(employeeId, employeeName, employeeHoursWorked, employeePayRate);
+            index++;
+
+        }
     }
 }
 

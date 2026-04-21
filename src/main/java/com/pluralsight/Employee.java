@@ -14,10 +14,14 @@ public class Employee {
         this.payRate = payRate;
     }
 
-    //region Getter/Setter
+    /***
+     * Calculate Gross Pay
+     * @return doubles
+     */
     public double getGrossPay(){
         return hoursWorked* payRate;
     }
+    //region Getter/Setter
     public int getEmployeeId(){
         return employeeId;
     }
