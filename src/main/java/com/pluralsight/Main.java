@@ -37,7 +37,7 @@ public class Main {
 
         for (Employee s : employees) {
             if(s!=null) {
-                    System.out.printf("Employee %s with ID number of -%f -Gross pay: ",s.getName(),s.getEmployeeId());
+                    System.out.printf("%s,ID- %d Gross pay: %.2f  \n",s.getName(),s.getEmployeeId(),s.getGrossPay());
 
             }
         }
